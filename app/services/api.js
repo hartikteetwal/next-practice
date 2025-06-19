@@ -1,0 +1,79 @@
+export const LoginService = async (email, password) => {
+    // console.log('/user/login', email, password);
+    const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    });
+    return response.json()
+}
+export const SignupService = async (email, password,name) => {
+    // console.log('/user/login', email, password);
+    const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password ,name}),
+    });
+    return response.json()
+}
+export const GetProducts = async () => {
+    // console.log('/user/login', email, password);
+    const response = await fetch('/api/product', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    console.log(response)
+    return response.json()
+}
+
+export const GetCartData = async (token) => {
+    const response = await fetch('/api/cart', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            token: token
+        },
+    });
+    return response.json()
+}
+  
+export const AddToCart = async (productId) => {
+    const response = await fetch('/api/cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+        body: JSON.stringify({ productId }),
+    });
+    return response.json()
+}
+
+export const GetProductById = async (productId) => {
+    console.log(productId)
+    const response = await fetch('/api/product/' + productId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    return response.json()
+}
+  
+export const GetAllOrders = async () => {
+    const response = await fetch(import.meta.env.VITE_BACKEND_API + '/order', {
+
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+    })
+    return response.json()
+  }
