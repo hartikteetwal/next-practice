@@ -67,7 +67,7 @@ export const GetProductById = async (productId) => {
 }
   
 export const GetAllOrders = async () => {
-    const response = await fetch(import.meta.env.VITE_BACKEND_API + '/order', {
+    const response = await fetch('/api/order', {
 
         method: 'GET',
         headers: {
@@ -75,5 +75,18 @@ export const GetAllOrders = async () => {
             token: localStorage.getItem('token'),
         },
     })
+    return response.json()
+}
+  
+export const DeleteFromCart = async (productId,all) => {
+    console.log("productId",productId)
+    const response = await fetch('/api/cart', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+        body: JSON.stringify({ productId, all}),
+    });
     return response.json()
   }

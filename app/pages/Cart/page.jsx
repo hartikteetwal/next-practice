@@ -2,6 +2,7 @@
 import Footer from "@/app/components/Footer";
 import Navbar from "@/app/components/Navbar";
 import { ShopContext } from "@/app/context/ShopContext";
+import { AddToCart, DeleteFromCart } from "@/app/services/api";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
@@ -25,6 +26,36 @@ const Cart = () => {
     const handleOrder = async () => {
         router.push("/pages/PlaceOrder")
     };
+
+    const handleAddToCart = async (product,all) => {
+        const response = await AddToCart(product._id,all);
+        if (response.success) {
+            getCartData()
+        } else {
+            toast.error(response.message || "Failed to add product to cart");
+        }
+    }
+
+    const handleQuantity = async (e, item) => {
+        const newQuantity = Number(e.target.value);
+
+        // Block invalid numbers
+        if (newQuantity < 0) return;
+
+        const prevQuantity = item.quantity;
+
+        if (newQuantity > prevQuantity) {
+            // Increase → call Add API
+            await handleAddToCart(item);
+        } else if (newQuantity < prevQuantity) {
+            // Decrease → call Delete API
+            await handleDelete(item._id,"one");
+        }
+
+        // Refresh cart
+        getCartData();
+    };
+    
 
     return (
         <>
@@ -53,10 +84,18 @@ const Cart = () => {
                                     <p className="text-sm text-gray-500 mb-2">{item.description}</p>
                                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-700">
                                         <p>Price: ₹ {item.price}</p>
-                                        <p>Quantity: {item.quantity}</p>
+                                        <p>Quantity: <input
+                                            className="py-1 px-2 ml-4 w-16 border rounded text-center"
+                                            type="number"
+                                            min="1"
+                                            value={item.quantity}
+                                            onChange={(e) => handleQuantity(e, item)}
+                                        />
+
+                                        </p>
                                         <p>Total: ₹ {item.price * item.quantity}</p>
                                         <button
-                                            onClick={() => handleDelete(item._id)}
+                                            onClick={() => handleDelete(item._id,"all")}
                                             className="text-red-500 hover:text-red-700 flex flex-col items-center p-2 sm:p-0 text-sm transition"
                                             title="Remove from cart"
                                         >
