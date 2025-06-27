@@ -8,21 +8,58 @@ dotenv.config()
 
 const placeOrder = async (req) => {
     try {
-        const { products, address, price, city, state, pincode } = req.body
+        const body = await req.json();
+        const { products, address, price, city, state, pincode } = body;
+
+        // Basic input validation
+        if (!products || !Array.isArray(products) || products.length === 0) {
+            return new Response(JSON.stringify({ success: false, message: "No products in order." }), { status: 400 });
+        }
+
+        if (!address || !price || !city || !state || !pincode) {
+            return new Response(JSON.stringify({ success: false, message: "Missing order details." }), { status: 400 });
+        }
+
         const userId = req.userId;
-        const paymentData = await Order.create({
-            products, address, price, userId, city, state, pincode,
+        if (!userId) {
+            return new Response(JSON.stringify({ success: false, message: "Unauthorized user." }), { status: 401 });
+        }
+
+        // Create order
+        const order = await Order.create({
+            products,
+            address,
+            price,
+            city,
+            state,
+            pincode,
+            userId,
             paymentMethod: "COD",
             payment: false,
-            date: Date.now()
-        })
-        await User.findByIdAndUpdate(userId, { cartData: {} })
-        return new Response(JSON.stringify({ success: true, paymentData }))
+            date: new Date()
+        });
+
+        // Clear user cart after successful order
+        await User.findByIdAndUpdate(userId, { cartData: {} });
+
+        return new Response(JSON.stringify({ success: true, order }), {
+            status: 201,
+            headers: { "Content-Type": "application/json" }
+        });
+
     } catch (error) {
-        console.log(error)
-        return new Response(JSON.stringify({ success: false, message: "server error" }))
+        console.error("Order Placement Error:", error);
+        return new Response(JSON.stringify({
+            success: false,
+            message: "Server error. Please try again later."
+        }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" }
+        });
     }
-}
+};
+
+
 
 // const placeStripe = async (req) => {
 //     try {

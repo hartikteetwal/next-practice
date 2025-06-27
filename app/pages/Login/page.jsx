@@ -12,14 +12,14 @@ const Login = () => {
     const [password, setPassword] = useState('12345678');
     const [isRegister, setIsRegister] = useState(false);
     const [name, setName] = useState(''); 
-    const {token,setToken} = useContext(ShopContext)
+    const {token,setToken,setRole} = useContext(ShopContext)
 
-    useEffect(() => {
-        const token = getToken();
-        if (token) {
-            router.replace('/pages/Home'); // Redirect to home if already logged in
-        }
-    }, []);
+    // useEffect(() => {
+    //     const token = getToken();
+    //     if (token) {
+    //         router.replace('/pages/Home'); // Redirect to home if already logged in
+    //     }
+    // }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -36,8 +36,13 @@ const Login = () => {
                     toast('Registration successful!');
                     setIsRegister(false);
                     localStorage.setItem('token', response.token);
-                    router.replace('/pages/Home');
+                    localStorage.setItem('role', response.role);
+           
+                        router.replace('/pages/Home');
+             
                     setToken(response.token)
+                    setRole(response.role)
+
                 } else {
                     toast('Registration failed: ' + response.message);
                 }
@@ -46,8 +51,13 @@ const Login = () => {
                 if (response.success) {
                     toast('Login successful!');
                     localStorage.setItem('token', response.token);
-                    router.replace('/pages/Home');
+                    localStorage.setItem('role', response.role);
+            
+                        router.replace('/pages/Home');
+              
                     setToken(response.token)
+                    setRole(response.role)
+
                 } else {
                     console.log(response)
                     toast('Login failed: ' + response.message);

@@ -12,3 +12,22 @@ export async function GET() {
         return NextResponse.json({ success: false, message: "server error" })
     }
 }
+
+export async function  POST(req){
+    try {
+        await connectDB();
+        const { productName, productImage, description, price, category } = await req.json()
+        if (!productImage || !productName || !description || !price || !category) return res.status(400).json({ success: false, message: "All fields are required" })
+        const newProduct = await Products.create({
+            productName: productName,
+            description: description,
+            price: price,
+            category: category,
+            productImage: productImage
+        })
+        return NextResponse.json({ success: true, message: "Product created successfully", newProduct })
+    } catch (error) {
+        console.log("error", error)
+        return NextResponse.json({ success: false, message: "server error" })
+    }
+}

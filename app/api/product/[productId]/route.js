@@ -20,3 +20,21 @@ export async function GET(req,{ params }) {
         return NextResponse.json({ success: false, message: "server error" })
     }
 }
+
+export async function DELETE(req,{ params }) {
+    const id = params?.productId
+    console.log("view ID",id)
+    if (!id) return NextResponse.json({ success: false, message: "Invalid ID" })
+    try {
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            await connectDB()
+            const products = await Products.findByIdAndDelete(id)
+            return NextResponse.json({ success: true, products })
+        } else {
+            console.log("error")
+        }
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({ success: false, message: "server error" })
+        }
+}

@@ -89,4 +89,27 @@ export const DeleteFromCart = async (productId,all) => {
         body: JSON.stringify({ productId, all}),
     });
     return response.json()
-  }
+}
+
+export const DeleteProduct = async (productId) => {
+    console.log(productId)
+    const response = await fetch('/api/product/' + productId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    return response.json()
+}
+
+export const CreateProduct = async (data) => {
+    const response = await fetch("/api/product/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            token: localStorage.getItem('token'),
+        },
+        body: JSON.stringify(data)
+    })
+    return response.json()
+}

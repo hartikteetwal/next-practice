@@ -24,7 +24,7 @@ export async function POST(req){
         
         const token = jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY)
         
-        return NextResponse.json({ success: true, message: "User registered successfully",token})
+        return NextResponse.json({ success: true, message: "User registered successfully", token, role: "user" })
     } catch (error) {
         console.log(error)
         return NextResponse.json({success:false,message:"server error"})

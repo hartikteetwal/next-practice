@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { ShopContext } from "@/app/context/ShopContext";
+import { useRouter } from "next/navigation";
 
 const PlaceOrder = () => {
     const [form, setForm] = useState({
@@ -17,6 +18,7 @@ const PlaceOrder = () => {
         state: "UP",
         country: "INDIA",
     });
+    const router = useRouter()
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const { getCartData, cartProducts, subtotal, deliveryFee, setSubtotal } = useContext(ShopContext); // Make sure `setCartData` exists in context
     const total = subtotal + deliveryFee;
@@ -51,14 +53,16 @@ const PlaceOrder = () => {
 
         try {
             if (paymentMethod === "cod") {
-                const res = await axios.post(import.meta.env.VITE_BACKEND_API + "/order/place", orderData, {
+                const res = await axios.post("/api/order", orderData, {
                     headers: {
                         'Content-Type': 'application/json',
                         token: localStorage.getItem('token'),
                     },
                 });
-                getCartData()
-                navigate('/order')
+                if (res.success) {
+                    getCartData()
+                    router.push("/pages/Order")
+                }
                 toast.success("Order placed successfully!");
             } else if (paymentMethod === "stripe") {
                 const res = await axios.post(import.meta.env.VITE_BACKEND_API + "/order/stripe", orderData, {
@@ -71,7 +75,7 @@ const PlaceOrder = () => {
                 window.location.href = res.data.session_url;
             } else if (paymentMethod === "razorpay") {
                 alert("Razorpay integration coming soon...");
-            }
+            } 
 
             // Reset form after order
             setForm({

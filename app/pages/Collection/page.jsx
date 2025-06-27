@@ -2,15 +2,20 @@
 import Cards from "@/app/components/Cards";
 import Footer from "@/app/components/Footer";
 import Navbar from "@/app/components/Navbar";
+import ProductTable from "@/app/components/ProductTable";
 import { ShopContext } from "@/app/context/ShopContext";
+import { DeleteProduct } from "@/app/services/api";
+import { useRouter } from "next/navigation";
 import React, { useState, useContext } from "react";
+import toast from "react-hot-toast";
 
 const categories = ["Mobile", "Tablet", "iPad"];
 
 const Collection = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [sortOrder, setSortOrder] = useState("");
-    const { products } = useContext(ShopContext);
+    const { products, role, getProducts } = useContext(ShopContext);
+    const router = useRouter()
 
     const filteredData = products
         .filter((item) =>
@@ -21,10 +26,26 @@ const Collection = () => {
             if (sortOrder === "highToLow") return b.price - a.price;
             return 0;
         });
+    
+    const handleEdit = () => {
+
+    }
+
+    const handleDelete = async (product) => {
+        const response = await DeleteProduct(product)
+        if (response.success) {
+            toast.success(response.message || "Product deleted successfully")
+            getProducts()
+        } else {
+            toast.error(response.message || "Product not deleted")
+        }
+        }
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
+            {
+                role==="user"?
         <section className="py-[100px] px-4 sm:px-6 lg:px-16">
             <h2 className="text-3xl font-bold text-[#016630] mb-8 text-center">
                 All <span className="text-[#009966]">Collections</span>
@@ -98,7 +119,27 @@ const Collection = () => {
                     )}
                 </div>
             </div>
-            </section>
+                    </section> :
+                    <>
+                        <section className="py-[100px] px-2 bg-gray-50 min-h-screen">
+                            <div className='padding-both'>
+
+                                <div className='flex justify-between items-center w-full  mb-8'>
+
+                                    <h2 className="text-3xl font-bold text-[#016630]">
+                                        All <span className="text-[#009966]">Products</span>
+                                    </h2>
+                                    <button className="bg-[#016630] text-white px-4 py-2 rounded-lg hover:bg-[#009966] transition" onClick={() => router.push("/pages/AddProducts")}>
+                                        Add Product
+                                    </button>
+
+                                </div>
+                                <ProductTable products={products} onEdit={handleEdit} onDelete={handleDelete} />
+                            </div>
+                        </section>
+                    </>
+            }
+
             <Footer/>
         </>
 

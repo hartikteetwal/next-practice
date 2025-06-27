@@ -8,6 +8,7 @@ export const ShopContext = createContext();
 
 const ShopContextProvider = ({ children }) => {
     const [token, setToken] = useState(null);
+    const [role, setRole] = useState("");
     const [products, setProducts] = useState([]);
     const [cartProducts, setCartProducts] = useState([]);
     const [cartData, setClientData] = useState([]);
@@ -17,8 +18,10 @@ const ShopContextProvider = ({ children }) => {
     // ✅ Get token only on client side
     useEffect(() => {
         const savedToken = localStorage.getItem('token');
+        const savedRole = localStorage.getItem('role');
         if (savedToken) {
             setToken(savedToken);
+            setRole(savedRole);
         }
     }, []);
 
@@ -97,7 +100,7 @@ const ShopContextProvider = ({ children }) => {
         subtotal,
         deliveryFee,
         cartProducts,
-        setCartProducts
+        setCartProducts,role,setRole
     };
 
     return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
