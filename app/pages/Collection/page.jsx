@@ -2,7 +2,9 @@
 import Cards from "@/app/components/Cards";
 import Footer from "@/app/components/Footer";
 import Navbar from "@/app/components/Navbar";
+import Spinner from "@/app/components/PageLoader";
 import ProductTable from "@/app/components/ProductTable";
+import SkeletonPage from "@/app/components/SkeletonPage";
 import { ShopContext } from "@/app/context/ShopContext";
 import { DeleteProduct } from "@/app/services/api";
 import { useRouter } from "next/navigation";
@@ -14,7 +16,7 @@ const categories = ["Mobile", "Tablet", "iPad"];
 const Collection = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     const [sortOrder, setSortOrder] = useState("");
-    const { products, role, getProducts } = useContext(ShopContext);
+    const { products, role, token, productLoader, getProducts } = useContext(ShopContext);
     const router = useRouter()
 
     const filteredData = products
@@ -39,20 +41,61 @@ const Collection = () => {
         } else {
             toast.error(response.message || "Product not deleted")
         }
-        }
+    }
+    
+      if (!token && !role) return (
+            <div>
+                <div className='min-h-100'>
+                    <SkeletonPage />;
+                </div>
+            </div>
+        )
 
     return (
         <>
             <Navbar />
+        
             {
-                role==="user"?
+                role === "admin" ? <>
+                    {
+                        productLoader && <Spinner />
+                    }
+                    <section className="py-[100px] px-2 bg-gray-50 min-h-screen">
+                        <div className='padding-both'>
+
+                            <div className='flex justify-between items-center w-full  mb-8'>
+
+                                <h2 className="text-3xl font-bold text-[#016630]">
+                                    All <span className="text-[#009966]">Products</span>
+                                </h2>
+                                <button className="bg-[#016630] text-white px-4 py-2 rounded-lg hover:bg-[#009966] transition" onClick={() => router.push("/pages/AddProducts")}>
+                                    Add Product
+                                </button>
+
+                            </div>
+                            {/* Product Panel */}
+                            <div className="w-full lg:w-[80%] px-2 lg:px-6">
+                                {products.length === 0 ? (
+                                    <p className="w-full bg-[#009966] text-white text-center py-3 rounded-md shadow-md">
+                                        No products found.
+                                    </p>
+
+                                ) : (
+                                    <ProductTable products={products} onEdit={handleEdit} onDelete={handleDelete} />
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                </> :
         <section className="py-[100px] px-4 sm:px-6 lg:px-16">
             <h2 className="text-3xl font-bold text-[#016630] mb-8 text-center">
                 All <span className="text-[#009966]">Collections</span>
             </h2>
 
             <div className="flex flex-col lg:flex-row gap-6">
-                {/* Filter Panel */}
+                            {/* Filter Panel */}
+                            {
+                                !productLoader&&
                 <div className="w-full lg:w-[20%] bg-white p-6 rounded-xl shadow-md border border-gray-200">
                     <h3 className="text-xl font-semibold mb-6 text-gray-800">Filters</h3>
 
@@ -108,36 +151,23 @@ const Collection = () => {
                             </button>
                         </div>
                     </div>
-                </div>
+                                </div>
+                            }
 
                 {/* Product Panel */}
                 <div className="w-full lg:w-[80%] px-2 lg:px-6">
-                    {filteredData.length === 0 ? (
-                        <p>No products found.</p>
+                                {products.length === 0 ? (
+                                    <p className="w-full bg-[#009966] text-white text-center py-3 rounded-md shadow-md">
+                                        No products found.
+                                    </p>
+                      
                     ) : (
                         <Cards products={filteredData} />
                     )}
                 </div>
             </div>
-                    </section> :
-                    <>
-                        <section className="py-[100px] px-2 bg-gray-50 min-h-screen">
-                            <div className='padding-both'>
-
-                                <div className='flex justify-between items-center w-full  mb-8'>
-
-                                    <h2 className="text-3xl font-bold text-[#016630]">
-                                        All <span className="text-[#009966]">Products</span>
-                                    </h2>
-                                    <button className="bg-[#016630] text-white px-4 py-2 rounded-lg hover:bg-[#009966] transition" onClick={() => router.push("/pages/AddProducts")}>
-                                        Add Product
-                                    </button>
-
-                                </div>
-                                <ProductTable products={products} onEdit={handleEdit} onDelete={handleDelete} />
-                            </div>
-                        </section>
-                    </>
+                    </section> 
+                    
             }
 
             <Footer/>

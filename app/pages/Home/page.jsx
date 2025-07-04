@@ -9,10 +9,12 @@ import LatestProduct from '@/app/components/LatestProduct';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import { ShopContext } from '@/app/context/ShopContext';
+import SkeletonPage from '@/app/components/SkeletonPage';
+import AdminDashboard from '@/app/components/AdminDashboard';
 
 const Home = () => {
     const router = useRouter();
-    const {role} = useContext(ShopContext)
+    const {role,token} = useContext(ShopContext)
 
     useEffect(() => {
         const token = getToken();
@@ -21,13 +23,22 @@ const Home = () => {
         }
     }, []);
 
+    if (!token && !role) return (
+        <div>
+            <div className='min-h-100'>
+                <SkeletonPage />;
+            </div>
+        </div>
+    )
+
     return (
         <div>
             <Navbar />
-            {role === "admin" ? <>
-                <div className='min-h-100'>
-                Dashboard
-                </div>
+            <div className='min-h-100'>
+                {role === "admin" ? <>
+                
+                <AdminDashboard/>
+             
             </> :
                 <>
         <HeroSection />
@@ -38,6 +49,7 @@ const Home = () => {
                     </div>
                 </>
                 }
+            </div>
             <Footer />
         </div>
   

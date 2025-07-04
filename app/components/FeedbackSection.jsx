@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { SendFeedback } from "../services/api";
 import toast from "react-hot-toast";
+import { SendFeedback } from "../services/api";
 
 const FeedbackSection = () => {
     const [formData, setFormData] = useState({

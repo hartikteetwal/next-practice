@@ -1,4 +1,5 @@
 'use client'
+import DotSpinner from "@/app/components/DotSpinner";
 import Footer from "@/app/components/Footer";
 import Navbar from "@/app/components/Navbar";
 import { ShopContext } from "@/app/context/ShopContext";
@@ -7,8 +8,9 @@ import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 
+
 const Cart = () => {
-    const { cartData, getCartData, subtotal, deliveryFee, setSubtotal, cartProducts, setCartProducts } = useContext(ShopContext); // Make sure `setCartData` exists in context
+    const { cartData, getCartData, subtotal, deliveryFee, setSubtotal,cartLoader, cartProducts, setCartProducts } = useContext(ShopContext); // Make sure `setCartData` exists in context
     const total = subtotal + deliveryFee;
     const router = useRouter()
 
@@ -59,11 +61,13 @@ const Cart = () => {
 
     return (
         <>
-            <Navbar/>
+            <Navbar />
+            
         <div className="px-4 py-20 bg-gray-50">
             <h1 className="text-4xl font-bold text-[#016630] mb-8 text-center">
                 My <span className="text-[#009966]">Cart</span>
-            </h1>
+                </h1>
+         
 
             <div className="padding-both mx-auto">
                 {cartProducts.length > 0 ? (
@@ -109,7 +113,10 @@ const Cart = () => {
                     </ul>
                 ) : (
                     <p className="text-center text-gray-600">Your cart is empty.</p>
-                )}
+                    )}
+                    {
+                        cartLoader && <DotSpinner />
+                    }
 
                 <div className="flex flex-col md:flex-row justify-end items-start mt-8">
 

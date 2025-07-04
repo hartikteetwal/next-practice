@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaLeaf, FaUserCircle } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaLeaf, FaUserCircle } from "react-icons/fa";
 import { FiMenu, FiX, FiShoppingCart } from "react-icons/fi";
 import { ShopContext } from "@/app/context/ShopContext";
 import { getRole, getToken } from "@/app/utils/auth";
@@ -76,6 +76,7 @@ const Navbar = () => {
                             )}
                         </Link>
                         <Link href="/pages/About" className="text-gray-700 hover:text-emerald-600 transition">About</Link>
+            
 
                         {/* Profile Dropdown */}
                         <div className="relative" ref={profileRef}>
@@ -85,12 +86,16 @@ const Navbar = () => {
                                 className="flex items-center gap-1 text-gray-700 hover:text-emerald-600 transition focus:outline-none"
                             >
                                 <FaUserCircle className="text-xl" />
+                                {isProfileOpen ?
+                                    <FaChevronUp className="text-[10px]" /> :
+                                    <FaChevronDown className="text-[10px]" />
+                                }
                             </button>
 
                             {isProfileOpen && (
                                 <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg z-10">
                                     { 
-                                        role==="user"&&
+                                        role==="user"?
                                     <button
                                         onClick={() => {
                                             router.push("/pages/Order");
@@ -99,7 +104,18 @@ const Navbar = () => {
                                         className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
                                     >
                                         Order
-                                    </button>
+                                            </button>
+                                            :
+                                            <button
+                                                onClick={() => {
+                                                    router.push("/pages/Users");
+                                                    setIsProfileOpen(false);
+                                                }}
+                                                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-700"
+                                            >
+                                                Users
+                                            </button>
+
                                     }
 
                                     <button
@@ -133,6 +149,10 @@ const Navbar = () => {
                         <Link href="/pages/Cart" className="block py-2 text-gray-700 hover:text-emerald-600 px-4" onClick={() => setIsOpen(false)}>Cart</Link>
                     }
                     <Link href="/pages/About" className="block py-2 text-gray-700 hover:text-emerald-600 px-4" onClick={() => setIsOpen(false)}>About</Link>
+                    {
+                        role === "admin" &&
+                        <Link href="/pages/Users" className="block py-2 text-gray-700 hover:text-emerald-600 px-4" onClick={() => setIsOpen(false)}>Users</Link>
+                    }
                     <div className="block py-2 text-gray-700 hover:text-emerald-600 px-4">
                         <button onClick={handleLogout} className="block w-full text-left hover:bg-gray-100 text-gray-700">Logout</button>
                     </div>

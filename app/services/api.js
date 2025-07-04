@@ -32,6 +32,16 @@ export const GetProducts = async () => {
     return response.json()
 }
 
+export const GetUsers = async () => {
+    const response = await fetch("/api/user", {
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    return response.json()
+}
+
 export const GetCartData = async (token) => {
     const response = await fetch('/api/cart', {
         method: 'GET',
@@ -66,8 +76,20 @@ export const GetProductById = async (productId) => {
     return response.json()
 }
   
-export const GetAllOrders = async () => {
+export const GetUserOrders = async () => {
     const response = await fetch('/api/order', {
+
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+    })
+    return response.json()
+}
+
+export const GetAllOrders = async () => {
+    const response = await fetch('/api/adminOrder', {
 
         method: 'GET',
         headers: {
@@ -113,3 +135,48 @@ export const CreateProduct = async (data) => {
     })
     return response.json()
 }
+
+export const OrderStatus = async (orderId, status) => {
+    const response = await fetch('/api/adminOrder/' + orderId, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({status:status})
+    });
+    return response.json()
+}
+
+export const OrderDelete = async (orderId) => {
+    console.log(orderId)
+    const response = await fetch('/api/adminOrder/' + orderId, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    return response.json()
+}
+
+export const OrderProduct = async (orderData) => {
+    const response = await fetch('/api/order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+        body: JSON.stringify( orderData ),
+    });
+    return response.json()
+}
+
+export const SendFeedback = async (formData) => {
+    const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    });
+    return response.json()
+  }

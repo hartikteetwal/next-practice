@@ -3,7 +3,7 @@ import { ShopContext } from "../context/ShopContext";
 import Cards from "./Cards";
 
 const LatestProduct = () => {
-    const { products } = useContext(ShopContext);
+    const { products, productLoader } = useContext(ShopContext);
 
     const latestProducts = products.filter((product) => product.latestProduct);
 

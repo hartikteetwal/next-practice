@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import Order from '@/app/_lib/orderModel'
 import User from '@/app/_lib/userModel'
 import userAuth from '../lib/authMiddleware'
+import { NextResponse } from 'next/server'
 dotenv.config()
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -118,7 +119,7 @@ const getOderByUserId = async (req) => {
         if (!userId) {
             return new Response(JSON.stringify({ success: false, message: "User ID is required" }));
         }
-        const orders = await Order.find({ userId }).sort({ date: -1 });
+        const orders = await Order.find({ userId });
         if (!orders || orders.length === 0) {
             return new Response(JSON.stringify({ success: false, message: "No orders found for this user" }));
         }
@@ -129,18 +130,8 @@ const getOderByUserId = async (req) => {
     }
 }
 
-// const getAllOrderByAdmin = async (req) => {
-//     try {
-//         const orders = await Order.find({})
-//         if (!orders || orders.length === 0) {
-//             return new Response(JSON.stringify({ success: false, message: "No orders found for this user" }));
-//         }
-//         return new Response(JSON.stringify({ success: true, orders }))
-//     } catch (error) {
-//         console.error("Error fetching orders:", error);
-//         return new Response(JSON.stringify({ success: false, message: "Internal server error" }));
-//     }
-// }
+
+
 
 export const POST = userAuth(placeOrder);
 // export const POST  = userAuth(placeStripe);

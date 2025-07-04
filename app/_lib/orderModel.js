@@ -40,7 +40,9 @@ const orderSchema = new mongoose.Schema({
     date: {
         type: Number,
         required: true
-    }
+    },
+  
+    status: { type: String, default: 'Order Placed' }
 
 })
 
