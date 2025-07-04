@@ -9,7 +9,7 @@ import { ShopContext } from "@/app/context/ShopContext";
 import { DeleteProduct } from "@/app/services/api";
 import { useRouter } from "next/navigation";
 import React, { useState, useContext } from "react";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const categories = ["Mobile", "Tablet", "iPad"];
 
@@ -156,7 +156,7 @@ const Collection = () => {
 
                 {/* Product Panel */}
                 <div className="w-full lg:w-[80%] px-2 lg:px-6">
-                                {products.length === 0 ? (
+                                {products.length === 0 && !productLoader ? (
                                     <p className="w-full bg-[#009966] text-white text-center py-3 rounded-md shadow-md">
                                         No products found.
                                     </p>
@@ -169,6 +169,7 @@ const Collection = () => {
                     </section> 
                     
             }
+            <Toaster />
 
             <Footer/>
         </>

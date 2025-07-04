@@ -2,7 +2,7 @@
 
 import React, { useContext, useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { ShopContext } from "@/app/context/ShopContext";
@@ -177,6 +177,8 @@ const PlaceOrder = () => {
                 </div>
             </div>
             <Footer />
+            <Toaster />
+
         </>
     );
 };

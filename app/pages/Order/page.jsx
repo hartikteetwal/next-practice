@@ -1,6 +1,6 @@
 'use client'
 import React, { useContext, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 import moment from 'moment';
 import { OrderDelete, OrderStatus } from '@/app/services/api';
@@ -191,7 +191,9 @@ const Order = () => {
                         </p>
                     )}
             </div>
-                    </section> 
+            </section> 
+            <Toaster />
+
             <Footer />
         </>
     );

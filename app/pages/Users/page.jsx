@@ -8,6 +8,7 @@ import { FaPlus, FaMinus } from "react-icons/fa";
 import { ShopContext } from "@/app/context/ShopContext";
 import { GetProductById } from "@/app/services/api";
 import DotSpinner from "@/app/components/DotSpinner";
+import { Toaster } from "react-hot-toast";
 
 const Users = () => {
     const { users, token, role, UserLoader } = useContext(ShopContext);
@@ -127,6 +128,8 @@ const Users = () => {
                     )}
                 </div>
             </section>
+            <Toaster />
+
             <Footer />
         </>
     );

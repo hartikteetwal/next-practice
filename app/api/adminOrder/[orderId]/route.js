@@ -5,7 +5,7 @@ import Order from "@/app/_lib/orderModel";
 export async function PATCH(req, { params }) {
     await connectDB(); // connect MongoDB
 
-    const  orderId  = params.orderId;
+    const orderId = params?.orderId;
     const { status } = await req.json();
 
     console.log("orderId",orderId,status)
@@ -36,10 +36,10 @@ export async function PATCH(req, { params }) {
 }
 
 
-export async function DELETE(req, { params }) {
+export async function DELETE({ params }) {
     await connectDB();
 
-    const { orderId } = params.orderId;
+    const { orderId } = params?.orderId;
 
     try {
         const deleted = await Order.findByIdAndDelete(orderId);

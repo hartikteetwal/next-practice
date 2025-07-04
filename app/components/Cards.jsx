@@ -29,7 +29,7 @@ const Cards = ({ products }) => {
                     className="bg-white rounded-2xl shadow-md overflow-hidden relative group hover:shadow-xl transition-all duration-300 flex flex-col"
                 >
                     <img
-                        src={product.productImage}
+                        src={product?.productImage ? product?.productImage: "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ="}
                         alt={product.productName}
                         className="w-full h-40 object-cover"
                     />

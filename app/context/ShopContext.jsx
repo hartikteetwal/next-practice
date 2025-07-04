@@ -129,7 +129,7 @@ const ShopContextProvider = ({ children }) => {
         }
     }
     useEffect(() => {
-        getOrder();
+        if (token) { getOrder() }
         if (role === "admin"&&token) {
             getusers();
         }

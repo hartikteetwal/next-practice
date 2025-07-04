@@ -6,6 +6,7 @@ import { ShopContext } from "@/app/context/ShopContext";
 import { AddToCart, DeleteFromCart } from "@/app/services/api";
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { FaTrash } from "react-icons/fa";
 
 
@@ -33,6 +34,7 @@ const Cart = () => {
         const response = await AddToCart(product._id,all);
         if (response.success) {
             getCartData()
+            toast.success(response.message);
         } else {
             toast.error(response.message || "Failed to add product to cart");
         }
@@ -145,6 +147,8 @@ const Cart = () => {
                 </div>
             </div>
             </div>
+            <Toaster />
+
             <Footer/>
         </>
     );

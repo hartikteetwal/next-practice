@@ -11,6 +11,7 @@ import Footer from '@/app/components/Footer';
 import { ShopContext } from '@/app/context/ShopContext';
 import SkeletonPage from '@/app/components/SkeletonPage';
 import AdminDashboard from '@/app/components/AdminDashboard';
+import { Toaster } from 'react-hot-toast';
 
 const Home = () => {
     const router = useRouter();
@@ -37,7 +38,7 @@ const Home = () => {
             <div className='min-h-100'>
                 {role === "admin" ? <>
                 
-                <AdminDashboard/>
+                    <AdminDashboard />
              
             </> :
                 <>
@@ -51,6 +52,7 @@ const Home = () => {
                 }
             </div>
             <Footer />
+            <Toaster />
         </div>
   
     );
