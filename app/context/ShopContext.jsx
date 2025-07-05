@@ -109,7 +109,7 @@ const ShopContextProvider = ({ children }) => {
             if (response.success) {
                 setOrders(response.orders);
                 console.log("orders",response.orders)
-                toast.success("Orders fetched successfully");
+                // toast.success("Orders fetched successfully");
                 setOrderLoader(false)
             } else {
                 toast.error("Failed to fetch orders");

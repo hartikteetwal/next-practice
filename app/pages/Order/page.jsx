@@ -52,6 +52,8 @@ const Order = () => {
         const confirmDelete = confirm("Are you sure you want to delete this order?");
         if (!confirmDelete) return;
 
+        console.log("orderId", orderId)
+
         try {
             const res = await OrderDelete(orderId)
             if (res.success) {
@@ -99,9 +101,19 @@ const Order = () => {
                                 {/* Order Meta Info Header with Toggle */}
                                 <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleExpand(order._id)}>
                                     <div className="text-left text-gray-700">
+                                        {
+                                            role === "admin" ? 
+                                                <>
+                                                <p><strong>Name:</strong> {order.userId.name}</p>
+                                                <p><strong>Date:</strong> {moment(order.date).format('DD MMM YYYY')}</p>
+                                                <p><strong>Total:</strong> ₹{order.price}</p>
+                                                </> :
+                                                <>
                                         <p><strong>Date:</strong> {moment(order.date).format('DD MMM YYYY')}</p>
                                         <p><strong>Payment:</strong> {order.paymentMethod} ({order.payment ? "Paid" : "Unpaid"})</p>
-                                        <p><strong>Total:</strong> ₹{order.price}</p>
+                                                <p><strong>Total:</strong> ₹{order.price}</p>
+                                                </>
+                                        }
                                     </div>
                                     <div className="text-right">
                                         {isExpanded ? (
@@ -138,6 +150,13 @@ const Order = () => {
                                             </select>
 
                                         </div>
+                                        {
+                                            role === "admin" && 
+                                                <div className="flex items-center justify-between mt-4">
+                                                    <label className="font-semibold text-gray-700">Payment:</label>
+                                                    <div>{order.paymentMethod} ({order.payment ? "Paid" : "Unpaid"})</div>
+                                                </div>
+                                        }
 
                                       
 

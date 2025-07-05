@@ -36,10 +36,12 @@ export async function PATCH(req, { params }) {
 }
 
 
-export async function DELETE({ params }) {
+export async function DELETE(req,{ params }) {
     await connectDB();
 
-    const { orderId } = params?.orderId;
+    const  orderId  = params?.orderId;
+
+    console.log("orderId", params);
 
     try {
         const deleted = await Order.findByIdAndDelete(orderId);

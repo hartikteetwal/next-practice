@@ -4,6 +4,8 @@ const { NextResponse } = require("next/server");
 export async function GET(){
     try {
         const orders = await Order.find({})
+            .populate("userId", "name email")
+            .sort({ date: -1 });
         if (!orders || orders.length === 0) {
             return NextResponse.json({ success: false, message: "No orders found for this user" });
         }
