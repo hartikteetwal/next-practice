@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic';
+
 import React, { useContext, useEffect } from 'react'
 import axios from 'axios'
 import { ShopContext } from '@/app/context/ShopContext'
@@ -16,12 +18,13 @@ const Verify = () => {
     const success = searchParams.get('success')
     const orderId = searchParams.get('orderId')
 
-    console.log("Verify response:",success,orderId)
+    console.log("Verify response:", success, orderId)
+
     const verifyPayment = async () => {
         try {
             if (!token) return
 
-            const response = await VerifyStripe(success, orderId )
+            const response = await VerifyStripe(success, orderId)
             if (response.success) {
                 setCartProducts([])
                 getCartData()
@@ -29,7 +32,7 @@ const Verify = () => {
                 router.push('/pages/Order')
             } else {
                 toast.error("Payment failed. Please try again.")
-                router.push('/pages/Cart') 
+                router.push('/pages/Cart')
             }
         } catch (error) {
             console.error('Payment verify error:', error)
@@ -39,13 +42,13 @@ const Verify = () => {
 
     useEffect(() => {
         verifyPayment()
-    }, [token])
+    }, [token,router])
 
     return (
         <div>
-            <SkeletonPage/>
-              <Toaster />
-      </div>
+            <SkeletonPage />
+            <Toaster />
+        </div>
     )
 }
 
