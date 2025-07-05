@@ -112,7 +112,7 @@ const ShopContextProvider = ({ children }) => {
                 // toast.success("Orders fetched successfully");
                 setOrderLoader(false)
             } else {
-                toast.error("Failed to fetch orders");
+                // toast.error("Failed to fetch orders");
                 setOrderLoader(false)
             }
         } catch (err) {

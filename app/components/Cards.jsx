@@ -1,21 +1,25 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import toast from 'react-hot-toast';
 import { AddToCart } from '../services/api';
 import { ShopContext } from '../context/ShopContext';
 import DotSpinner from './DotSpinner';
 
 const Cards = ({ products }) => {
+    const [cartAddLoader,setCartAddLoader] = useState(false)
     const { getCartData,productLoader } = useContext(ShopContext)
 
     const handleAddToCart = async (product) => {
         console.log("Adding to cart:", product);
+        setCartAddLoader(true)
         const response = await AddToCart(product._id);
         console.log("Add to cart response:", response);
         if (response.success) {
             toast.success(response.message || "Product added to cart successfully");
             getCartData()
+            setCartAddLoader(false)
         } else {
             toast.error(response.message || "Failed to add product to cart");
+            setCartAddLoader(false)
         }
     }
     return (
@@ -46,7 +50,7 @@ const Cards = ({ products }) => {
 
                         {/* Add to Cart button */}
                         <button onClick={() => handleAddToCart(product)} className="w-full bg-[#009966] text-white font-semibold py-2 rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 mt-auto transition duration-300">
-                            Add to Cart
+                            {cartAddLoader ? "Adding..." : "Add to Cart"}
                         </button>
                     </div>
                 </div>

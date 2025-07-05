@@ -5,61 +5,162 @@ import User from '@/app/_lib/userModel'
 import userAuth from '../lib/authMiddleware'
 import { NextResponse } from 'next/server'
 dotenv.config()
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
-const placeOrder = async (req) => {
+export const placeOrder = async (req) => {
     try {
         const body = await req.json();
-        const { products, address, price, city, state, pincode } = body;
-
-        // Basic input validation
-        if (!products || !Array.isArray(products) || products.length === 0) {
-            return new Response(JSON.stringify({ success: false, message: "No products in order." }), { status: 400 });
-        }
-
-        if (!address || !price || !city || !state || !pincode) {
-            return new Response(JSON.stringify({ success: false, message: "Missing order details." }), { status: 400 });
-        }
-
-        const userId = req.userId;
-        if (!userId) {
-            return new Response(JSON.stringify({ success: false, message: "Unauthorized user." }), { status: 401 });
-        }
-
-        // Create order
-        const order = await Order.create({
+        const {
             products,
             address,
             price,
             city,
             state,
             pincode,
-            userId,
-            paymentMethod: "COD",
-            payment: false,
-            date: new Date()
-        });
+            paymentMethod,
+            origin,
+        } = body;
 
-        // Clear user cart after successful order
-        await User.findByIdAndUpdate(userId, { cartData: {} });
+        // ✅ Step 1: Basic Validation
+        if (!products || !Array.isArray(products) || products.length === 0) {
+            return new Response(
+                JSON.stringify({ success: false, message: "No products in order." }),
+                { status: 400 }
+            );
+        }
 
-        return new Response(JSON.stringify({ success: true, order }), {
-            status: 201,
-            headers: { "Content-Type": "application/json" }
-        });
+        if (!address || !price || !city || !state || !pincode) {
+            return new Response(
+                JSON.stringify({ success: false, message: "Missing order details." }),
+                { status: 400 }
+            );
+        }
 
+        const userId = req.userId;
+        if (!userId) {
+            return new Response(
+                JSON.stringify({ success: false, message: "Unauthorized user." }),
+                { status: 401 }
+            );
+        }
+
+        // ✅ Step 2: Handle Cash on Delivery (COD)
+        if (paymentMethod === "cod") {
+            const order = await Order.create({
+                products,
+                address,
+                price,
+                city,
+                state,
+                pincode,
+                userId,
+                paymentMethod: "COD",
+                payment: false,
+                date: new Date(),
+            });
+
+            // Clear user's cart
+            await User.findByIdAndUpdate(userId, { cartData: {} });
+
+            return new Response(JSON.stringify({ success: true, order }), {
+                status: 201,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+
+        // ✅ Step 3: Handle Stripe Payment
+        if (paymentMethod === "stripe") {
+
+            if (!origin) {
+                return new Response(
+                    JSON.stringify({ success: false, message: "Missing origin URL." }),
+                    { status: 400 }
+                );
+            }
+
+            console.log("origin", origin);
+
+            const orderData = {
+                products,
+                address,
+                price,
+                city,
+                state,
+                pincode,
+                userId,
+                paymentMethod: "Stripe",
+                payment: false,
+                date: new Date(),
+            };
+
+            const newOrder = await Order.create(orderData);
+
+            // Map products to Stripe line_items
+            const line_items = products.map((product) => ({
+                price_data: {
+                    currency: "inr",
+                    product_data: {
+                        name: product.productName,
+                    },
+                    unit_amount: product.price * 100,
+                },
+                quantity: product.quantity || 1,
+            }));
+
+            // Add delivery charge
+            line_items.push({
+                price_data: {
+                    currency: "inr",
+                    product_data: {
+                        name: "Delivery Charge",
+                    },
+                    unit_amount: 1000, // ₹10
+                },
+                quantity: 1,
+            });
+
+            // Create Stripe session
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ["card"],
+                line_items,
+                mode: "payment",
+                success_url: `${origin}/pages/Verify?success=true&orderId=${newOrder._id}`,
+                cancel_url: `${origin}/pages/Verify?success=false&orderId=${newOrder._id}`,
+                metadata: {
+                    orderId: newOrder._id.toString(),
+                    userId: userId.toString(),
+                },
+            });
+
+            return new Response(
+                JSON.stringify({ success: true, session_url: session.url }),
+                {
+                    status: 200,
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+        }
+
+        // ❌ Invalid payment method fallback
+        return new Response(
+            JSON.stringify({ success: false, message: "Invalid payment method." }),
+            { status: 400 }
+        );
     } catch (error) {
         console.error("Order Placement Error:", error);
-        return new Response(JSON.stringify({
-            success: false,
-            message: "Server error. Please try again later."
-        }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" }
-        });
+        return new Response(
+            JSON.stringify({
+                success: false,
+                message: "Server error. Please try again later.",
+            }),
+            {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+            }
+        );
     }
 };
-
+  
 
 
 // const placeStripe = async (req) => {

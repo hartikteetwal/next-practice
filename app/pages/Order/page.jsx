@@ -205,7 +205,7 @@ const Order = () => {
                         );
                     })
                 ) : (
-                        <p className="w-full bg-[#009966] text-white text-center py-3 rounded-md shadow-md">
+                        !OrderLoader && <p className="w-full bg-[#009966] text-white text-center py-3 rounded-md shadow-md">
                             No orders found.
                         </p>
                     )}

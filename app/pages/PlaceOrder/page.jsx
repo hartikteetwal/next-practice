@@ -24,7 +24,7 @@ const PlaceOrder = () => {
     const router = useRouter();
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [loading, setLoading] = useState(false);
-    const { getCartData, cartProducts, subtotal, deliveryFee, getOrder } = useContext(ShopContext);
+    const { getCartData, cartProducts, setCartProducts, subtotal, deliveryFee, getOrder } = useContext(ShopContext);
     const total = subtotal + deliveryFee;
 
     const handleChange = (e) => {
@@ -45,15 +45,18 @@ const PlaceOrder = () => {
             pincode: form.pincode,
             price: total,
             origin: window.location.origin,
+            paymentMethod: paymentMethod,
         };
 
         try {
             setLoading(true);
             let res;
             if (paymentMethod === "cod") {
+       
                 res = await OrderProduct(orderData)
 
                 if (res.success) {
+                    setCartProducts([])
                     toast.success("Order placed successfully!");
                     getCartData();
                     getOrder();
@@ -61,15 +64,23 @@ const PlaceOrder = () => {
                 }
 
             } else if (paymentMethod === "stripe") {
-                res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/order/stripe`, orderData, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        token: localStorage.getItem('token'),
-                    },
-                });
+       
+
+                res = await OrderProduct(orderData)
                 getCartData();
                 getOrder()
-                window.location.href = res.data.session_url;
+
+                if (res.success) {
+                    const { session_url } = res; 
+                    window.location.replace(session_url);
+                } else {
+                    toast.error(res.message);
+                }
+
+                console.log("Stripe response:", res);
+                // toast.success("Order placed successfully!");
+
+                // window.location.href = res.data.session_url;
 
             } else if (paymentMethod === "razorpay") {
                 toast("Razorpay integration coming soon...");

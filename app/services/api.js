@@ -180,3 +180,14 @@ export const SendFeedback = async (formData) => {
     });
     return response.json()
   }
+export const VerifyStripe = async (success,orderId) => {
+    const response = await fetch('/api/verify', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: localStorage.getItem('token'),
+        },
+        body: JSON.stringify({ success : success, orderId: orderId }),
+    });
+    return response.json()
+  }
