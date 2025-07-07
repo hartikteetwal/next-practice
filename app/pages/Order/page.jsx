@@ -174,6 +174,10 @@ const Order = () => {
                                                             src={product.productImage}
                                                             alt={product.productName}
                                                             className="w-20 h-20 object-cover rounded-md border"
+                                                            onError={(e) => {
+                                                                e.target.src =
+                                                                    "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=";
+                                                            }}
                                                         />
                                                         <div className="flex-1">
                                                             <h4 className="font-semibold">{product.productName}</h4>

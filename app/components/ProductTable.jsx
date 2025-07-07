@@ -28,6 +28,16 @@ const ProductTable = ({ products, onEdit, onDelete }) => {
                                     src={product.productImage}
                                     alt={product.productName}
                                     className="w-16 h-16 object-cover rounded"
+                                    <img
+                                    src={item.image || ""}
+                                    alt={item.name || "No Image"}
+                                    className="w-28 h-28 object-cover rounded-lg"
+                                    onError={(e) => {
+                                        e.target.src =
+                                            "https://media.istockphoto.com/id/1409329028/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=_zOuJu755g2eEUioiOUdz_mHKJQJn-tDgIAhQzyeKUQ=";
+                                    }}
+                                />
+
                                 />
                             </td>
                             <td className="px-4 py-3 text-sm text-gray-800">{product.productName}</td>
