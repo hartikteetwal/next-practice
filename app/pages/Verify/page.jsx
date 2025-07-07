@@ -2,10 +2,11 @@
 
 import React, { Suspense } from 'react'
 import VerifyContent from './VerifyContent'
+import SkeletonPage from '@/app/components/SkeletonPage'
 
 const VerifyPage = () => {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div><SkeletonPage/></div>}>
             <VerifyContent />
         </Suspense>
     )
